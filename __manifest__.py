@@ -57,6 +57,8 @@
         'security/ir.model.access.csv',
         # Configuration
         'data/ir_config_parameter.xml',
+        # Menu items (loaded early - defines parent menu structure)
+        'data/menuitem.xml',
         # Wizard
         'wizard/refresh_financial_data_wizard_views.xml',
         # Views (order matters - base views first)
@@ -66,8 +68,6 @@
         'views/project_analytics_dashboard_views.xml',
         # Reports
         'report/project_financial_report_templates.xml',
-        # Menu items (loaded last - references actions)
-        'data/menuitem.xml',
     ],
     'installable': True,
     'application': False,
