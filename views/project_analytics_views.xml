@@ -141,10 +141,7 @@
                        decoration-danger="budget_status == 'exceeded'"/>
 
                 <!-- Snapshot tracking -->
-                <button name="action_view_snapshots" type="object" class="btn-link" optional="hide"
-                        icon="fa-camera" title="View Snapshots">
-                    <field name="snapshot_count"/> Snapshots
-                </button>
+                <field name="snapshot_count" string="Snapshots" optional="hide" width="100px"/>
             </list>
         </field>
     </record>
