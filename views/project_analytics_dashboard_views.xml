@@ -131,7 +131,7 @@
         <field name="model">project.project</field>
         <field name="priority">50</field>
         <field name="arch" type="xml">
-            <graph string="Project Financial Trends" type="bar" stacked="0" sample="1">
+            <graph string="Project Financial Trends" type="bar" sample="1">
                 <field name="name"/>
                 <field name="customer_invoiced_amount_net" type="measure" string="Revenue (NET)"/>
                 <field name="vendor_bills_total_net" type="measure" string="Vendor Bills (NET)"/>

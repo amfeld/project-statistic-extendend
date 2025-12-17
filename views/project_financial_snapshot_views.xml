@@ -177,9 +177,9 @@
                 <filter string="Loss-making" name="loss" domain="[('profit_loss_net', '&lt;', 0)]"/>
                 <separator/>
                 <filter string="This Year" name="this_year"
-                        domain="[('snapshot_date', '>=', (context_today()).strftime('%Y-01-01'))]"/>
+                        domain="[('snapshot_date', '>=', context_today().strftime('%Y-01-01'))]"/>
                 <filter string="Last 12 Months" name="last_12_months"
-                        domain="[('snapshot_date', '>=', (context_today() - relativedelta(months=12)).strftime('%Y-%m-%d'))]"/>
+                        domain="[('snapshot_date', '>=', (context_today() + datetime.timedelta(days=-365)).strftime('%Y-%m-%d'))]"/>
                 <group expand="0" string="Group By">
                     <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
                     <filter string="Period Type" name="group_type" context="{'group_by': 'snapshot_type'}"/>
@@ -210,7 +210,7 @@
         <field name="binding_model_id" ref="project.model_project_project"/>
         <field name="binding_view_types">form,list</field>
         <field name="state">code</field>
-        <field name="code">
+        <field name="code"><![CDATA[
 if records:
     snapshot_model = env['project.financial.snapshot']
     for project in records:
@@ -226,7 +226,7 @@ if records:
             'sticky': False,
         }
     }
-        </field>
+]]></field>
     </record>
 
     <!-- Cron Jobs for Automatic Snapshots -->

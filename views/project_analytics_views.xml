@@ -13,7 +13,7 @@
                 </header>
 
                 <!-- Hidden currency field for monetary widget -->
-                <field name="currency_id" invisible="1" column_invisible="1"/>
+                <field name="currency_id" column_invisible="1"/>
 
                 <!-- Sequence for manual drag&drop sorting (handle icon only, not displayed as column) -->
                 <field name="sequence" widget="handle"/>
@@ -29,7 +29,7 @@
                        decoration-success="analytic_status_display == 'Has Account'"
                        decoration-danger="analytic_status_display == 'No Account'"
                        optional="show" width="120px"/>
-                <field name="has_analytic_account" invisible="1" column_invisible="1"/>
+                <field name="has_analytic_account" column_invisible="1"/>
 
                 <!-- Sales Order Fields (confirmed orders) -->
                 <field name="has_sales_orders" column_invisible="1"/>
@@ -692,7 +692,7 @@
                 <field name="name" string="Project" filter_domain="['|', ('name', 'ilike', self), ('client_name', 'ilike', self)]"/>
                 <field name="client_name" string="Client"/>
                 <field name="head_of_project" string="Project Manager"/>
-                <field name="analytic_account_id" string="Analytic Account"/>
+                <field name="account_id" string="Analytic Account"/>
 
                 <!-- Filters -->
                 <separator/>
@@ -718,20 +718,20 @@
 
                 <!-- Date Range Filters -->
                 <filter string="Started This Year" name="started_this_year"
-                        domain="[('date_start', '>=', (context_today()).strftime('%Y-01-01'))]"/>
+                        domain="[('date_start', '>=', context_today().strftime('%Y-01-01'))]"/>
                 <filter string="Started This Quarter" name="started_this_quarter"
-                        domain="[('date_start', '>=', (context_today() - relativedelta(months=3)).strftime('%Y-%m-01'))]"/>
+                        domain="[('date_start', '>=', (context_today() + datetime.timedelta(days=-90)).strftime('%Y-%m-01'))]"/>
                 <filter string="Started This Month" name="started_this_month"
-                        domain="[('date_start', '>=', (context_today()).strftime('%Y-%m-01'))]"/>
+                        domain="[('date_start', '>=', context_today().strftime('%Y-%m-01'))]"/>
 
                 <separator/>
 
                 <filter string="Due This Year" name="due_this_year"
-                        domain="[('date', '&lt;=', (context_today()).strftime('%Y-12-31')), ('date', '!=', False)]"/>
+                        domain="[('date', '&lt;=', context_today().strftime('%Y-12-31')), ('date', '!=', False)]"/>
                 <filter string="Due This Quarter" name="due_this_quarter"
-                        domain="[('date', '&lt;=', (context_today() + relativedelta(months=3)).strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
+                        domain="[('date', '&lt;=', (context_today() + datetime.timedelta(days=90)).strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
                 <filter string="Due This Month" name="due_this_month"
-                        domain="[('date', '&lt;=', (context_today()).strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
+                        domain="[('date', '&lt;=', context_today().strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
                 <filter string="Overdue" name="overdue"
                         domain="[('date', '&lt;', context_today().strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
 
