@@ -257,6 +257,13 @@ class ProjectAnalytics(models.Model):
         aggregator='sum',
         help="Total internal project costs without tax (Nettokosten). Calculated as: Labor Costs + Other Costs (Net). Vendor bills are tracked separately. All amounts are NET (without VAT)."
     )
+    total_all_costs_net = fields.Float(
+        string='All Costs (Net)',
+        compute='_compute_financial_data',
+        store=True,
+        aggregator='sum',
+        help="Combined total of all project costs without tax. Calculated as: Total Costs (Net) + Vendor Bills (Net). This represents the complete cost picture including both internal costs and vendor expenses."
+    )
 
     # Summary fields - NET-based calculations
     profit_loss_net = fields.Float(
@@ -462,6 +469,7 @@ class ProjectAnalytics(models.Model):
                 project.labor_costs = 0.0
                 project.other_costs_net = 0.0
                 project.total_costs_net = 0.0
+                project.total_all_costs_net = 0.0
                 project.profit_loss_net = 0.0
                 project.negative_difference_net = 0.0
                 project.current_calculated_profit_loss = 0.0
@@ -575,6 +583,7 @@ class ProjectAnalytics(models.Model):
             project.labor_costs_adjusted = labor_costs_adjusted
             project.other_costs_net = other_costs_net
             project.total_costs_net = total_costs_net
+            project.total_all_costs_net = total_costs_net + vendor_bills_total_net
 
             project.profit_loss_net = profit_loss_net
             project.negative_difference_net = negative_difference_net

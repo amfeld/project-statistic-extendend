@@ -11,8 +11,7 @@
                 <field name="name"/>
                 <field name="client_name"/>
                 <field name="customer_invoiced_amount_net"/>
-                <field name="total_costs_net"/>
-                <field name="vendor_bills_total_net"/>
+                <field name="total_all_costs_net"/>
                 <field name="profit_loss_net"/>
                 <field name="total_hours_booked"/>
                 <field name="currency_id"/>
@@ -57,7 +56,7 @@
                                         <div class="col-6">
                                             <span class="text-muted">Costs</span><br/>
                                             <strong class="text-danger">
-                                                <t t-esc="record.total_costs_net.raw_value + record.vendor_bills_total_net.raw_value" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <field name="total_all_costs_net" widget="monetary"/>
                                             </strong>
                                         </div>
                                     </div>
