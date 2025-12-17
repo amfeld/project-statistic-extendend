@@ -227,7 +227,7 @@
         <field name="name">project.project.form.account.analytics</field>
         <field name="model">project.project</field>
         <field name="arch" type="xml">
-            <form string="Project Financial Analysis" create="false" edit="false" delete="false">
+            <form string="Project Financial Analysis" create="false" delete="false">
                 <header>
                     <button name="%(action_refresh_financial_data_wizard)d" type="action"
                             string="Refresh Financial Data" class="btn-primary"
