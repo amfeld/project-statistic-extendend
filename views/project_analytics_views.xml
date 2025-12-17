@@ -122,6 +122,29 @@
                        string="Current P&amp;L (Calc.)"/>
                 <field name="negative_difference_net" sum="Total Losses (Net)" optional="hide"
                        widget="monetary" options="{'currency_field': 'currency_id'}" width="140px" string="Losses"/>
+
+                <!-- Budget Tracking -->
+                <field name="budget_amount" sum="Total Budget" optional="hide"
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="140px" string="Budget"/>
+                <field name="budget_variance" sum="Total Budget Variance" optional="hide"
+                       widget="monetary" options="{'currency_field': 'currency_id'}"
+                       decoration-success="budget_variance &gt;= 0"
+                       decoration-danger="budget_variance &lt; 0" width="140px"
+                       string="Budget Variance"/>
+                <field name="budget_variance_percent" optional="hide" width="120px" string="Budget Var. %"
+                       decoration-success="budget_variance_percent &gt;= 0"
+                       decoration-danger="budget_variance_percent &lt; 0"/>
+                <field name="budget_status" optional="hide" widget="badge" width="120px"
+                       decoration-info="budget_status == 'no_budget'"
+                       decoration-success="budget_status == 'under' or budget_status == 'on_track'"
+                       decoration-warning="budget_status == 'over'"
+                       decoration-danger="budget_status == 'exceeded'"/>
+
+                <!-- Snapshot tracking -->
+                <button name="action_view_snapshots" type="object" class="btn-link" optional="hide"
+                        icon="fa-camera" title="View Snapshots">
+                    <field name="snapshot_count"/> Snapshots
+                </button>
             </list>
         </field>
     </record>
@@ -215,6 +238,13 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_view_snapshots"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-camera"
+                                help="View financial snapshots over time">
+                            <field name="snapshot_count" widget="statinfo" string="Snapshots"/>
+                        </button>
                         <button name="action_view_account_moves"
                                 type="object"
                                 class="oe_stat_button"
@@ -496,6 +526,111 @@
                             </div>
                         </page>
 
+                        <page string="💰 Budget Tracking" name="budget">
+                            <!-- Budget Status Alert -->
+                            <div class="alert alert-info" role="alert" invisible="budget_amount &gt; 0">
+                                <strong>ℹ️ No Budget Set</strong><br/>
+                                Set a budget amount below to track budget variance and get visual indicators for project financial health.
+                            </div>
+
+                            <div class="alert alert-success" role="alert" invisible="budget_status != 'under' and budget_status != 'on_track'">
+                                <strong>✅ Budget Status: On Track</strong><br/>
+                                This project is within budget limits.
+                            </div>
+
+                            <div class="alert alert-warning" role="alert" invisible="budget_status != 'over'">
+                                <strong>⚠️ Budget Status: Over Budget</strong><br/>
+                                This project is approaching budget limits. Monitor costs closely.
+                            </div>
+
+                            <div class="alert alert-danger" role="alert" invisible="budget_status != 'exceeded'">
+                                <strong>🚨 Budget Status: Budget Exceeded</strong><br/>
+                                This project has significantly exceeded its budget. Immediate action may be required.
+                            </div>
+
+                            <group col="2">
+                                <group string="Budget Configuration">
+                                    <field name="budget_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="budget_status" widget="badge"
+                                           decoration-info="budget_status == 'no_budget'"
+                                           decoration-success="budget_status == 'under' or budget_status == 'on_track'"
+                                           decoration-warning="budget_status == 'over'"
+                                           decoration-danger="budget_status == 'exceeded'"/>
+                                </group>
+                                <group string="Budget Variance Analysis" invisible="budget_amount == 0">
+                                    <field name="budget_variance" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                           decoration-success="budget_variance &gt;= 0"
+                                           decoration-danger="budget_variance &lt; 0"/>
+                                    <field name="budget_variance_percent" widget="percentage"
+                                           decoration-success="budget_variance_percent &gt;= 0"
+                                           decoration-danger="budget_variance_percent &lt; 0"/>
+                                    <field name="is_over_budget" widget="boolean"
+                                           decoration-danger="is_over_budget == True"
+                                           decoration-success="is_over_budget == False"/>
+                                </group>
+                            </group>
+
+                            <group string="📊 Budget vs Actual Comparison" invisible="budget_amount == 0">
+                                <group string="Planned (Budget)">
+                                    <label for="budget_amount" string="Total Budget"/>
+                                    <div>
+                                        <field name="budget_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline fw-bold" readonly="1"/>
+                                    </div>
+                                </group>
+                                <group string="Actual (Current)">
+                                    <label for="customer_invoiced_amount_net" string="Actual Revenue"/>
+                                    <div>
+                                        <field name="customer_invoiced_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline fw-bold" readonly="1"/>
+                                    </div>
+                                    <label for="total_all_costs_net" string="Actual Costs"/>
+                                    <div>
+                                        <field name="total_all_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="oe_inline fw-bold" readonly="1"/>
+                                    </div>
+                                </group>
+                            </group>
+
+                            <div class="alert alert-light mt-3" invisible="budget_amount == 0">
+                                <strong>📝 Budget Tracking Notes:</strong>
+                                <ul>
+                                    <li><strong>Budget Variance:</strong> Difference between actual revenue and planned budget</li>
+                                    <li><strong>Positive Variance:</strong> Revenue exceeds budget (favorable)</li>
+                                    <li><strong>Negative Variance:</strong> Revenue below budget (needs attention)</li>
+                                    <li><strong>Over Budget Check:</strong> Compares total costs against budget amount</li>
+                                </ul>
+                            </div>
+                        </page>
+
+                        <page string="👁️ Portal Visibility" name="portal">
+                            <div class="alert alert-info">
+                                <strong>ℹ️ Customer Portal Settings</strong><br/>
+                                Configure what financial information customers can see in their portal.
+                            </div>
+
+                            <group>
+                                <group string="Portal Access">
+                                    <field name="portal_show_financial_data" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+
+                            <group string="Visible Financial Data" invisible="not portal_show_financial_data">
+                                <group string="Basic Metrics">
+                                    <field name="portal_show_revenue" widget="boolean_toggle"/>
+                                    <field name="portal_show_costs" widget="boolean_toggle"/>
+                                    <field name="portal_show_profit_loss" widget="boolean_toggle"/>
+                                </group>
+                                <group string="Additional Details">
+                                    <field name="portal_show_budget" widget="boolean_toggle"/>
+                                    <field name="portal_show_detailed_breakdown" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+
+                            <div class="alert alert-warning mt-3" invisible="not portal_show_financial_data">
+                                <strong>⚠️ Privacy Notice:</strong><br/>
+                                Enabling portal access will allow the customer contact associated with this project to view
+                                the selected financial information through their portal account.
+                            </div>
+                        </page>
+
                         <page string="ℹ️ Project Details" name="details">
                             <group>
                                 <group string="Project Information">
@@ -550,6 +685,102 @@
         </field>
     </record>
 
+    <!-- Search view with advanced filters -->
+    <record id="view_project_search_account_analytics" model="ir.ui.view">
+        <field name="name">project.project.search.account.analytics</field>
+        <field name="model">project.project</field>
+        <field name="arch" type="xml">
+            <search string="Project Statistics Search">
+                <!-- Quick search fields -->
+                <field name="name" string="Project" filter_domain="['|', ('name', 'ilike', self), ('client_name', 'ilike', self)]"/>
+                <field name="client_name" string="Client"/>
+                <field name="head_of_project" string="Project Manager"/>
+                <field name="analytic_account_id" string="Analytic Account"/>
+
+                <!-- Filters -->
+                <separator/>
+
+                <!-- Data Availability Filters -->
+                <filter string="Has Analytic Account" name="has_analytic" domain="[('has_analytic_account', '=', True)]"/>
+                <filter string="No Analytic Account" name="no_analytic" domain="[('has_analytic_account', '=', False)]"/>
+
+                <separator/>
+
+                <!-- Profitability Status Filters -->
+                <filter string="Profitable" name="profitable" domain="[('profit_loss_net', '>', 0)]"/>
+                <filter string="Break-even" name="breakeven" domain="[('profit_loss_net', '=', 0)]"/>
+                <filter string="Loss-making" name="loss" domain="[('profit_loss_net', '&lt;', 0)]"/>
+
+                <separator/>
+
+                <!-- Project Status Filters -->
+                <filter string="Active Projects" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived Projects" name="archived" domain="[('active', '=', False)]"/>
+
+                <separator/>
+
+                <!-- Date Range Filters -->
+                <filter string="Started This Year" name="started_this_year"
+                        domain="[('date_start', '>=', (context_today()).strftime('%Y-01-01'))]"/>
+                <filter string="Started This Quarter" name="started_this_quarter"
+                        domain="[('date_start', '>=', (context_today() - relativedelta(months=3)).strftime('%Y-%m-01'))]"/>
+                <filter string="Started This Month" name="started_this_month"
+                        domain="[('date_start', '>=', (context_today()).strftime('%Y-%m-01'))]"/>
+
+                <separator/>
+
+                <filter string="Due This Year" name="due_this_year"
+                        domain="[('date', '&lt;=', (context_today()).strftime('%Y-12-31')), ('date', '!=', False)]"/>
+                <filter string="Due This Quarter" name="due_this_quarter"
+                        domain="[('date', '&lt;=', (context_today() + relativedelta(months=3)).strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
+                <filter string="Due This Month" name="due_this_month"
+                        domain="[('date', '&lt;=', (context_today()).strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
+                <filter string="Overdue" name="overdue"
+                        domain="[('date', '&lt;', context_today().strftime('%Y-%m-%d')), ('date', '!=', False)]"/>
+
+                <separator/>
+
+                <!-- Outstanding Amount Filters -->
+                <filter string="Has Outstanding Invoices" name="has_outstanding"
+                        domain="[('customer_outstanding_amount_net', '>', 0)]"/>
+                <filter string="Fully Paid" name="fully_paid"
+                        domain="[('customer_outstanding_amount_net', '=', 0), ('customer_invoiced_amount_net', '>', 0)]"/>
+
+                <separator/>
+
+                <!-- Budget Filters -->
+                <filter string="Has Budget Set" name="has_budget"
+                        domain="[('budget_amount', '>', 0)]"/>
+                <filter string="Over Budget" name="over_budget"
+                        domain="[('is_over_budget', '=', True)]"/>
+                <filter string="Under Budget" name="under_budget"
+                        domain="[('budget_status', '=', 'under')]"/>
+                <filter string="On Track" name="on_track"
+                        domain="[('budget_status', '=', 'on_track')]"/>
+                <filter string="Budget Exceeded" name="budget_exceeded"
+                        domain="[('budget_status', '=', 'exceeded')]"/>
+
+                <separator/>
+
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="Client" name="group_client" context="{'group_by': 'client_name'}"/>
+                    <filter string="Project Manager" name="group_manager" context="{'group_by': 'head_of_project'}"/>
+                    <filter string="Stage" name="group_stage" context="{'group_by': 'stage_id'}"/>
+                    <filter string="Analytic Status" name="group_analytic_status" context="{'group_by': 'analytic_status_display'}"/>
+                    <separator/>
+                    <filter string="Start Date (Month)" name="group_start_month" context="{'group_by': 'date_start:month'}"/>
+                    <filter string="Start Date (Quarter)" name="group_start_quarter" context="{'group_by': 'date_start:quarter'}"/>
+                    <filter string="Start Date (Year)" name="group_start_year" context="{'group_by': 'date_start:year'}"/>
+                    <separator/>
+                    <filter string="End Date (Month)" name="group_end_month" context="{'group_by': 'date:month'}"/>
+                    <filter string="End Date (Quarter)" name="group_end_quarter" context="{'group_by': 'date:quarter'}"/>
+                    <filter string="End Date (Year)" name="group_end_year" context="{'group_by': 'date:year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- Window action for project analytics -->
     <record id="action_project_analytics_report" model="ir.actions.act_window">
         <field name="name">Project Statistics</field>
@@ -562,8 +793,9 @@
             (0, 0, {'view_mode': 'graph', 'view_id': ref('view_project_graph_account_analytics')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_project_form_account_analytics')})
         ]"/>
+        <field name="search_view_id" ref="view_project_search_account_analytics"/>
         <field name="domain">[]</field>
-        <field name="context">{}</field>
+        <field name="context">{'search_default_has_analytic': 1, 'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No projects found</p>
             <p>This view shows all projects for analysis and reporting purposes with detailed customer and vendor tracking.</p>

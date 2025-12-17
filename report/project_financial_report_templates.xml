@@ -44,11 +44,11 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Start Date:</strong></td>
-                                        <td><t t-esc="pd['project'].date_start or 'N/A'" t-options="{'widget': 'date'}"/></td>
+                                        <td><t t-esc="pd['date_start_fmt']"/></td>
                                     </tr>
                                     <tr>
                                         <td><strong>End Date:</strong></td>
-                                        <td><t t-esc="pd['project'].date or 'N/A'" t-options="{'widget': 'date'}"/></td>
+                                        <td><t t-esc="pd['date_end_fmt']"/></td>
                                     </tr>
                                 </table>
                             </div>
@@ -66,7 +66,7 @@
                                     <div class="card-body">
                                         <h6 class="card-subtitle text-muted">Revenue (NET)</h6>
                                         <h4 class="card-title text-success">
-                                            <t t-esc="pd['project'].customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <t t-esc="pd['revenue_fmt']"/>
                                             <small><t t-esc="currency_symbol"/></small>
                                         </h4>
                                     </div>
@@ -77,7 +77,7 @@
                                     <div class="card-body">
                                         <h6 class="card-subtitle text-muted">Total Costs (NET)</h6>
                                         <h4 class="card-title text-danger">
-                                            <t t-esc="pd['total_costs']" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <t t-esc="pd['total_costs_fmt']"/>
                                             <small><t t-esc="currency_symbol"/></small>
                                         </h4>
                                     </div>
@@ -88,7 +88,7 @@
                                     <div class="card-body">
                                         <h6 class="card-subtitle text-muted">Profit/Loss (NET)</h6>
                                         <h4 t-attf-class="card-title #{pd['is_profitable'] and 'text-success' or 'text-danger'}">
-                                            <t t-esc="pd['project'].profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <t t-esc="pd['profit_loss_fmt']"/>
                                             <small><t t-esc="currency_symbol"/></small>
                                         </h4>
                                     </div>
@@ -125,28 +125,28 @@
                                         <tr>
                                             <td>Sales Orders (Reference)</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].sale_order_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['sale_order_amt_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Outgoing Invoices</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].customer_invoices_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['customer_invoices_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Credit Notes</td>
                                             <td class="text-end text-danger">
-                                                <t t-esc="pd['project'].customer_credit_notes_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['customer_credit_notes_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Cash Discounts Granted</td>
                                             <td class="text-end text-warning">
-                                                <t t-esc="pd['project'].customer_skonto_taken" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['customer_skonto_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
@@ -154,7 +154,7 @@
                                             <td><strong>Total Invoiced (NET)</strong></td>
                                             <td class="text-end">
                                                 <strong>
-                                                    <t t-esc="pd['project'].customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                    <t t-esc="pd['customer_invoiced_fmt']"/>
                                                     <t t-esc="currency_symbol"/>
                                                 </strong>
                                             </td>
@@ -174,14 +174,14 @@
                                         <tr>
                                             <td>Paid</td>
                                             <td class="text-end text-success">
-                                                <t t-esc="pd['project'].customer_paid_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['customer_paid_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Outstanding</td>
                                             <td class="text-end text-danger">
-                                                <t t-esc="pd['project'].customer_outstanding_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['customer_outstanding_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                         </tr>
@@ -191,7 +191,7 @@
                                     <div class="alert alert-info mt-3">
                                         <strong>Budget Variance:</strong>
                                         <span t-attf-class="#{pd['is_on_budget'] and 'text-success' or 'text-danger'}">
-                                            <t t-esc="pd['revenue_variance']" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <t t-esc="pd['revenue_variance_fmt']"/>
                                             <t t-esc="currency_symbol"/>
                                             (<t t-esc="pd['revenue_variance_pct']"/>%)
                                         </span>
@@ -220,7 +220,7 @@
                                         <tr>
                                             <td>Vendor Bills</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].vendor_bills_total_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['vendor_bills_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                             <td class="text-end"><t t-esc="pd['vendor_pct']"/>%</td>
@@ -228,7 +228,7 @@
                                         <tr>
                                             <td>Labor Costs (Adjusted)</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].labor_costs_adjusted" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['labor_costs_adjusted_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                             <td class="text-end"><t t-esc="pd['labor_pct']"/>%</td>
@@ -236,7 +236,7 @@
                                         <tr>
                                             <td>Other Costs</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].other_costs_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['other_costs_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                             <td class="text-end"><t t-esc="pd['other_pct']"/>%</td>
@@ -244,7 +244,7 @@
                                         <tr>
                                             <td>Vendor Discounts Received</td>
                                             <td class="text-end text-success">
-                                                -<t t-esc="pd['project'].vendor_skonto_received" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                -<t t-esc="pd['vendor_skonto_rcv_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                             <td class="text-end">-</td>
@@ -253,7 +253,7 @@
                                             <td><strong>Total Costs (NET)</strong></td>
                                             <td class="text-end">
                                                 <strong>
-                                                    <t t-esc="pd['total_costs']" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                    <t t-esc="pd['total_costs_fmt']"/>
                                                     <t t-esc="currency_symbol"/>
                                                 </strong>
                                             </td>
@@ -274,19 +274,19 @@
                                         <tr>
                                             <td>Hours Booked</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].total_hours_booked" t-options="{'widget': 'float', 'precision': 2}"/> h
+                                                <t t-esc="pd['hours_booked_fmt']"/> h
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Hours (Adjusted)</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].total_hours_booked_adjusted" t-options="{'widget': 'float', 'precision': 2}"/> h
+                                                <t t-esc="pd['hours_adjusted_fmt']"/> h
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Hourly Rate Used</td>
                                             <td class="text-end">
-                                                <t t-esc="general_hourly_rate" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="round(general_hourly_rate, 2)"/>
                                                 <t t-esc="currency_symbol"/>/h
                                             </td>
                                         </tr>
@@ -316,7 +316,7 @@
                                             <td>Profit/Loss (NET Basis)</td>
                                             <td class="text-end">
                                                 <strong t-attf-class="#{pd['is_profitable'] and 'text-success' or 'text-danger'}">
-                                                    <t t-esc="pd['project'].profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                    <t t-esc="pd['profit_loss_fmt']"/>
                                                     <t t-esc="currency_symbol"/>
                                                 </strong>
                                             </td>
@@ -328,7 +328,7 @@
                                         <tr>
                                             <td>Current P&amp;L (Calculated)</td>
                                             <td class="text-end">
-                                                <t t-esc="pd['project'].current_calculated_profit_loss" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="pd['current_pl_fmt']"/>
                                                 <t t-esc="currency_symbol"/>
                                             </td>
                                             <td>
@@ -374,18 +374,18 @@
                                         <tbody>
                                             <t t-foreach="pd['snapshots']" t-as="snapshot">
                                                 <tr>
-                                                    <td><t t-esc="snapshot.period_label"/></td>
+                                                    <td><t t-esc="snapshot['period_label']"/></td>
                                                     <td class="text-end">
-                                                        <t t-esc="snapshot.customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                        <t t-esc="snapshot['customer_invoiced_amount_net']"/>
                                                     </td>
                                                     <td class="text-end">
-                                                        <t t-esc="snapshot.total_costs_net + snapshot.vendor_bills_total_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                        <t t-esc="snapshot['total_costs']"/>
                                                     </td>
-                                                    <td t-attf-class="text-end #{snapshot.profit_loss_net >= 0 and 'text-success' or 'text-danger'}">
-                                                        <t t-esc="snapshot.profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                    <td t-attf-class="text-end #{snapshot['profit_loss_net_raw'] >= 0 and 'text-success' or 'text-danger'}">
+                                                        <t t-esc="snapshot['profit_loss_net']"/>
                                                     </td>
                                                     <td class="text-end">
-                                                        <t t-esc="snapshot.total_hours_booked" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                        <t t-esc="snapshot['total_hours_booked']"/>
                                                     </td>
                                                 </tr>
                                             </t>
@@ -403,8 +403,8 @@
                                     <strong>Notes:</strong>
                                     <ul>
                                         <li>All amounts are shown in NET (without VAT) for accurate profit calculation</li>
-                                        <li>Labor Costs (Adjusted) = Hours (Adjusted) × <t t-esc="general_hourly_rate"/> <t t-esc="currency_symbol"/>/h</li>
-                                        <li>Vendor bills surcharge factor: <t t-esc="vendor_bill_surcharge"/></li>
+                                        <li>Labor Costs (Adjusted) = Hours (Adjusted) × <t t-esc="round(general_hourly_rate, 2)"/> <t t-esc="currency_symbol"/>/h</li>
+                                        <li>Vendor bills surcharge factor: <t t-esc="round(vendor_bill_surcharge, 2)"/></li>
                                     </ul>
                                 </small>
                             </div>
@@ -448,7 +448,7 @@
                                 <div class="card-body">
                                     <h6 class="text-muted">Total Revenue</h6>
                                     <h4 class="text-success">
-                                        <t t-esc="total_revenue" t-options="{'widget': 'float', 'precision': 2}"/>
+                                        <t t-esc="total_revenue_fmt"/>
                                         <t t-esc="currency_symbol"/>
                                     </h4>
                                 </div>
@@ -459,7 +459,7 @@
                                 <div class="card-body">
                                     <h6 class="text-muted">Total Costs</h6>
                                     <h4 class="text-danger">
-                                        <t t-esc="total_costs" t-options="{'widget': 'float', 'precision': 2}"/>
+                                        <t t-esc="total_costs_fmt"/>
                                         <t t-esc="currency_symbol"/>
                                     </h4>
                                 </div>
@@ -470,7 +470,7 @@
                                 <div class="card-body">
                                     <h6 class="text-muted">Total Profit</h6>
                                     <h4 t-attf-class="#{total_profit >= 0 and 'text-success' or 'text-danger'}">
-                                        <t t-esc="total_profit" t-options="{'widget': 'float', 'precision': 2}"/>
+                                        <t t-esc="total_profit_fmt"/>
                                         <t t-esc="currency_symbol"/>
                                     </h4>
                                 </div>
@@ -519,13 +519,13 @@
                                     <t t-foreach="top_5" t-as="project">
                                         <tr>
                                             <td><t t-esc="project_index + 1"/></td>
-                                            <td><t t-esc="project.name"/></td>
-                                            <td><t t-esc="project.client_name or '-'"/></td>
+                                            <td><t t-esc="project['name']"/></td>
+                                            <td><t t-esc="project['client_name']"/></td>
                                             <td class="text-end">
-                                                <t t-esc="project.customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="project['revenue']"/>
                                             </td>
                                             <td class="text-end text-success">
-                                                <t t-esc="project.profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="project['profit_loss']"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -556,13 +556,13 @@
                                     <t t-foreach="bottom_5" t-as="project">
                                         <tr>
                                             <td><t t-esc="project_index + 1"/></td>
-                                            <td><t t-esc="project.name"/></td>
-                                            <td><t t-esc="project.client_name or '-'"/></td>
+                                            <td><t t-esc="project['name']"/></td>
+                                            <td><t t-esc="project['client_name']"/></td>
                                             <td class="text-end">
-                                                <t t-esc="project.customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="project['revenue']"/>
                                             </td>
-                                            <td t-attf-class="text-end #{project.profit_loss_net >= 0 and 'text-success' or 'text-danger'}">
-                                                <t t-esc="project.profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <td t-attf-class="text-end #{project['profit_loss_raw'] >= 0 and 'text-success' or 'text-danger'}">
+                                                <t t-esc="project['profit_loss']"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -591,21 +591,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="docs" t-as="doc">
+                                    <t t-foreach="all_projects" t-as="doc">
                                         <tr>
-                                            <td><t t-esc="doc.name"/></td>
-                                            <td><t t-esc="doc.client_name or '-'"/></td>
+                                            <td><t t-esc="doc['name']"/></td>
+                                            <td><t t-esc="doc['client_name']"/></td>
                                             <td class="text-end">
-                                                <t t-esc="doc.customer_invoiced_amount_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="doc['revenue']"/>
                                             </td>
                                             <td class="text-end">
-                                                <t t-esc="doc.total_costs_net + doc.vendor_bills_total_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="doc['costs']"/>
                                             </td>
-                                            <td t-attf-class="text-end #{doc.profit_loss_net >= 0 and 'text-success' or 'text-danger'}">
-                                                <t t-esc="doc.profit_loss_net" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            <td t-attf-class="text-end #{doc['profit_loss_raw'] >= 0 and 'text-success' or 'text-danger'}">
+                                                <t t-esc="doc['profit_loss']"/>
                                             </td>
                                             <td class="text-end">
-                                                <t t-esc="doc.total_hours_booked" t-options="{'widget': 'float', 'precision': 2}"/>
+                                                <t t-esc="doc['hours']"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -614,10 +614,10 @@
                                     <tr>
                                         <td><strong>Total</strong></td>
                                         <td></td>
-                                        <td class="text-end"><strong><t t-esc="total_revenue" t-options="{'widget': 'float', 'precision': 2}"/></strong></td>
-                                        <td class="text-end"><strong><t t-esc="total_costs" t-options="{'widget': 'float', 'precision': 2}"/></strong></td>
-                                        <td class="text-end"><strong><t t-esc="total_profit" t-options="{'widget': 'float', 'precision': 2}"/></strong></td>
-                                        <td class="text-end"><strong><t t-esc="total_hours" t-options="{'widget': 'float', 'precision': 2}"/></strong></td>
+                                        <td class="text-end"><strong><t t-esc="total_revenue_fmt"/></strong></td>
+                                        <td class="text-end"><strong><t t-esc="total_costs_fmt"/></strong></td>
+                                        <td class="text-end"><strong><t t-esc="total_profit_fmt"/></strong></td>
+                                        <td class="text-end"><strong><t t-esc="total_hours_fmt"/></strong></td>
                                     </tr>
                                 </tfoot>
                             </table>

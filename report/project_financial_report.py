@@ -5,6 +5,20 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+def format_amount(value):
+    """Format amount with 2 decimal places and thousands separator"""
+    return "{:,.2f}".format(value if value else 0)
+
+
+def format_date(date_value):
+    """Format date value"""
+    if not date_value:
+        return 'N/A'
+    if isinstance(date_value, str):
+        return date_value
+    return date_value.strftime('%Y-%m-%d')
+
+
 class ProjectFinancialReport(models.AbstractModel):
     """
     Report model for Project Financial Analysis PDF.
@@ -69,19 +83,53 @@ class ProjectFinancialReport(models.AbstractModel):
             revenue_variance = project.customer_invoiced_amount_net - budget if budget > 0 else 0
             revenue_variance_pct = (revenue_variance / budget * 100) if budget > 0 else 0
 
+            # Format snapshot data
+            formatted_snapshots = []
+            for snapshot in snapshots:
+                formatted_snapshots.append({
+                    'period_label': snapshot.period_label,
+                    'customer_invoiced_amount_net': format_amount(snapshot.customer_invoiced_amount_net),
+                    'total_costs': format_amount(snapshot.total_costs_net + snapshot.vendor_bills_total_net),
+                    'profit_loss_net': format_amount(snapshot.profit_loss_net),
+                    'profit_loss_net_raw': snapshot.profit_loss_net,
+                    'total_hours_booked': format_amount(snapshot.total_hours_booked),
+                })
+
             project_data.append({
                 'project': project,
                 'profit_margin': round(profit_margin, 2),
                 'total_costs': total_costs,
+                'total_costs_fmt': format_amount(total_costs),
                 'vendor_pct': round(vendor_pct, 1),
                 'labor_pct': round(labor_pct, 1),
                 'other_pct': round(other_pct, 1),
-                'snapshots': snapshots,
+                'snapshots': formatted_snapshots,
                 'budget': budget,
+                'budget_fmt': format_amount(budget),
                 'revenue_variance': revenue_variance,
+                'revenue_variance_fmt': format_amount(revenue_variance),
                 'revenue_variance_pct': round(revenue_variance_pct, 1),
                 'is_profitable': project.profit_loss_net >= 0,
                 'is_on_budget': revenue_variance >= 0 if budget > 0 else True,
+                # Formatted amounts
+                'revenue_fmt': format_amount(project.customer_invoiced_amount_net),
+                'profit_loss_fmt': format_amount(project.profit_loss_net),
+                'sale_order_amt_fmt': format_amount(project.sale_order_amount_net),
+                'customer_invoices_fmt': format_amount(project.customer_invoices_net),
+                'customer_credit_notes_fmt': format_amount(project.customer_credit_notes_net),
+                'customer_skonto_fmt': format_amount(project.customer_skonto_taken),
+                'customer_invoiced_fmt': format_amount(project.customer_invoiced_amount_net),
+                'customer_paid_fmt': format_amount(project.customer_paid_amount_net),
+                'customer_outstanding_fmt': format_amount(project.customer_outstanding_amount_net),
+                'vendor_bills_fmt': format_amount(project.vendor_bills_total_net),
+                'labor_costs_adjusted_fmt': format_amount(project.labor_costs_adjusted),
+                'other_costs_fmt': format_amount(project.other_costs_net),
+                'vendor_skonto_rcv_fmt': format_amount(project.vendor_skonto_received),
+                'hours_booked_fmt': format_amount(project.total_hours_booked),
+                'hours_adjusted_fmt': format_amount(project.total_hours_booked_adjusted),
+                'current_pl_fmt': format_amount(project.current_calculated_profit_loss),
+                'date_start_fmt': format_date(project.date_start),
+                'date_end_fmt': format_date(project.date),
             })
 
         return {
@@ -135,6 +183,41 @@ class ProjectFinancialReportSummary(models.AbstractModel):
         avg_profit_margin = (total_profit / total_revenue * 100) if total_revenue > 0 else 0
         avg_revenue_per_project = total_revenue / len(projects) if projects else 0
 
+        # Format all projects data
+        formatted_projects = []
+        for project in projects:
+            total_project_costs = project.total_costs_net + project.vendor_bills_total_net
+            formatted_projects.append({
+                'name': project.name,
+                'client_name': project.client_name or '-',
+                'revenue': format_amount(project.customer_invoiced_amount_net),
+                'costs': format_amount(total_project_costs),
+                'profit_loss': format_amount(project.profit_loss_net),
+                'profit_loss_raw': project.profit_loss_net,
+                'hours': format_amount(project.total_hours_booked),
+            })
+
+        # Format top 5
+        formatted_top_5 = []
+        for project in top_5:
+            formatted_top_5.append({
+                'name': project.name,
+                'client_name': project.client_name or '-',
+                'revenue': format_amount(project.customer_invoiced_amount_net),
+                'profit_loss': format_amount(project.profit_loss_net),
+            })
+
+        # Format bottom 5
+        formatted_bottom_5 = []
+        for project in bottom_5:
+            formatted_bottom_5.append({
+                'name': project.name,
+                'client_name': project.client_name or '-',
+                'revenue': format_amount(project.customer_invoiced_amount_net),
+                'profit_loss': format_amount(project.profit_loss_net),
+                'profit_loss_raw': project.profit_loss_net,
+            })
+
         return {
             'doc_ids': docids,
             'doc_model': 'project.project',
@@ -145,18 +228,23 @@ class ProjectFinancialReportSummary(models.AbstractModel):
             # Aggregated metrics
             'total_projects': len(projects),
             'total_revenue': total_revenue,
+            'total_revenue_fmt': format_amount(total_revenue),
             'total_costs': total_costs + total_vendor_bills,
+            'total_costs_fmt': format_amount(total_costs + total_vendor_bills),
             'total_vendor_bills': total_vendor_bills,
             'total_profit': total_profit,
+            'total_profit_fmt': format_amount(total_profit),
             'total_hours': total_hours,
+            'total_hours_fmt': format_amount(total_hours),
             'total_outstanding': total_outstanding,
             # Status counts
             'profitable_count': profitable_count,
             'loss_count': loss_count,
             'breakeven_count': breakeven_count,
             # Rankings
-            'top_5': top_5,
-            'bottom_5': bottom_5,
+            'top_5': formatted_top_5,
+            'bottom_5': formatted_bottom_5,
+            'all_projects': formatted_projects,
             # Averages
             'avg_profit_margin': round(avg_profit_margin, 2),
             'avg_revenue_per_project': round(avg_revenue_per_project, 2),

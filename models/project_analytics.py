@@ -281,6 +281,81 @@ class ProjectAnalytics(models.Model):
         help="Total project losses as a positive number, NET basis (Verluste Netto). This shows the absolute value of negative profit/loss. If profit/loss is positive, this field is 0. Useful for tracking and reporting total losses."
     )
 
+    # Snapshot tracking
+    snapshot_count = fields.Integer(
+        string='Snapshots',
+        compute='_compute_snapshot_count',
+        help="Number of financial snapshots recorded for this project"
+    )
+
+    # Portal Visibility Settings
+    portal_show_financial_data = fields.Boolean(
+        string='Show Financial Data in Portal',
+        default=False,
+        help="Allow customers to see financial data for this project in the customer portal."
+    )
+    portal_show_revenue = fields.Boolean(
+        string='Show Revenue',
+        default=True,
+        help="Show revenue information in customer portal (if financial data is enabled)."
+    )
+    portal_show_costs = fields.Boolean(
+        string='Show Costs',
+        default=False,
+        help="Show cost information in customer portal (if financial data is enabled)."
+    )
+    portal_show_profit_loss = fields.Boolean(
+        string='Show Profit/Loss',
+        default=False,
+        help="Show profit/loss information in customer portal (if financial data is enabled)."
+    )
+    portal_show_budget = fields.Boolean(
+        string='Show Budget',
+        default=True,
+        help="Show budget information in customer portal (if financial data and budget are enabled)."
+    )
+    portal_show_detailed_breakdown = fields.Boolean(
+        string='Show Detailed Breakdown',
+        default=False,
+        help="Show detailed revenue and cost breakdown in customer portal (if financial data is enabled)."
+    )
+
+    # Budget Tracking
+    budget_amount = fields.Float(
+        string='Budget Amount',
+        default=0.0,
+        help="Planned budget for this project. Used to calculate budget variance and track if project is over or under budget."
+    )
+    budget_variance = fields.Float(
+        string='Budget Variance',
+        compute='_compute_budget_tracking',
+        store=True,
+        help="Difference between actual revenue and budget. Positive means over budget (good), negative means under budget."
+    )
+    budget_variance_percent = fields.Float(
+        string='Budget Variance %',
+        compute='_compute_budget_tracking',
+        store=True,
+        help="Budget variance as percentage of budget amount."
+    )
+    is_over_budget = fields.Boolean(
+        string='Over Budget',
+        compute='_compute_budget_tracking',
+        store=True,
+        help="Indicates if actual costs exceed the planned budget."
+    )
+    budget_status = fields.Selection([
+        ('no_budget', 'No Budget Set'),
+        ('under', 'Under Budget'),
+        ('on_track', 'On Track'),
+        ('over', 'Over Budget'),
+        ('exceeded', 'Budget Exceeded'),
+    ], string='Budget Status',
+        compute='_compute_budget_tracking',
+        store=True,
+        help="Overall budget status indicator based on variance percentage."
+    )
+
     # Current Calculated Profit/Loss (using adjusted values)
     current_calculated_profit_loss = fields.Float(
         string='Current P&L (Calculated)',
@@ -1218,6 +1293,58 @@ class ProjectAnalytics(models.Model):
                     'sticky': False,
                 }
             }
+        }
+
+    @api.depends('id')
+    def _compute_snapshot_count(self):
+        """Compute the number of financial snapshots for each project."""
+        for project in self:
+            project.snapshot_count = self.env['project.financial.snapshot'].search_count([
+                ('project_id', '=', project.id)
+            ])
+
+    @api.depends('budget_amount', 'customer_invoiced_amount_net', 'total_all_costs_net')
+    def _compute_budget_tracking(self):
+        """Compute budget variance and status indicators."""
+        for project in self:
+            if not project.budget_amount or project.budget_amount == 0:
+                project.budget_variance = 0
+                project.budget_variance_percent = 0
+                project.is_over_budget = False
+                project.budget_status = 'no_budget'
+                continue
+
+            # Calculate budget variance (actual revenue - budget)
+            project.budget_variance = project.customer_invoiced_amount_net - project.budget_amount
+            project.budget_variance_percent = (project.budget_variance / project.budget_amount * 100) if project.budget_amount > 0 else 0
+
+            # Check if costs are over budget
+            project.is_over_budget = project.total_all_costs_net > project.budget_amount
+
+            # Determine budget status based on variance percentage
+            variance_pct = project.budget_variance_percent
+            if variance_pct < -15:
+                project.budget_status = 'exceeded'  # More than 15% over budget
+            elif variance_pct < -5:
+                project.budget_status = 'over'  # 5-15% over budget
+            elif variance_pct < 5:
+                project.budget_status = 'on_track'  # Within 5% of budget
+            else:
+                project.budget_status = 'under'  # More than 5% under budget
+
+    def action_view_snapshots(self):
+        """Open the financial snapshots view filtered by this project."""
+        self.ensure_one()
+        return {
+            'name': _('Financial Snapshots - %s') % self.name,
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.financial.snapshot',
+            'view_mode': 'list,graph,pivot,form',
+            'domain': [('project_id', '=', self.id)],
+            'context': {
+                'default_project_id': self.id,
+                'search_default_group_month': 1,
+            },
         }
 
     @api.model

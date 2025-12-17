@@ -49,6 +49,7 @@
         'timesheet_grid',  # Odoo 18 Enterprise timesheet grid
         'sale',
         'sale_project',  # Required for project_id field on sale.order
+        'portal',  # Customer portal access
     ],
     'author': 'Alex Feld',
     'license': 'LGPL-3',
@@ -66,6 +67,7 @@
         'views/project_analytics_views.xml',
         'views/project_financial_snapshot_views.xml',
         'views/project_analytics_dashboard_views.xml',
+        'views/project_portal_views.xml',
         # Reports
         'report/project_financial_report_templates.xml',
     ],

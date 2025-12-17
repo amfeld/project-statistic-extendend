@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Portal Project View Template -->
+    <template id="portal_my_project_financial" name="Portal: My Project Financial Status">
+        <t t-call="portal.portal_layout">
+            <t t-set="project" t-value="project"/>
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="mb-0">
+                                    <i class="fa fa-bar-chart"/> Project Financial Status
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <h4><t t-esc="project.name"/></h4>
+                                <p class="text-muted"><t t-esc="project.client_name or 'No Client'"/></p>
+
+                                <t t-if="project.portal_show_financial_data">
+                                    <!-- Financial Overview Cards -->
+                                    <div class="row mt-4">
+                                        <div class="col-md-4" t-if="project.portal_show_revenue">
+                                            <div class="card border-success">
+                                                <div class="card-body text-center">
+                                                    <h6 class="text-muted">Revenue (NET)</h6>
+                                                    <h3 class="text-success">
+                                                        <t t-esc="'{:,.2f}'.format(project.customer_invoiced_amount_net)"/>
+                                                        <t t-esc="project.currency_id.symbol"/>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4" t-if="project.portal_show_costs">
+                                            <div class="card border-danger">
+                                                <div class="card-body text-center">
+                                                    <h6 class="text-muted">Total Costs</h6>
+                                                    <h3 class="text-danger">
+                                                        <t t-esc="'{:,.2f}'.format(project.total_all_costs_net)"/>
+                                                        <t t-esc="project.currency_id.symbol"/>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4" t-if="project.portal_show_profit_loss">
+                                            <div t-attf-class="card border-#{project.profit_loss_net >= 0 and 'success' or 'danger'}">
+                                                <div class="card-body text-center">
+                                                    <h6 class="text-muted">Profit/Loss</h6>
+                                                    <h3 t-attf-class="text-#{project.profit_loss_net >= 0 and 'success' or 'danger'}">
+                                                        <t t-esc="'{:,.2f}'.format(project.profit_loss_net)"/>
+                                                        <t t-esc="project.currency_id.symbol"/>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Detailed Breakdown -->
+                                    <div class="row mt-4" t-if="project.portal_show_detailed_breakdown">
+                                        <div class="col-md-6" t-if="project.portal_show_revenue">
+                                            <div class="card">
+                                                <div class="card-header bg-success text-white">
+                                                    <h5 class="mb-0">Revenue Details</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-sm">
+                                                        <tr>
+                                                            <td>Invoiced Amount</td>
+                                                            <td class="text-end">
+                                                                <t t-esc="'{:,.2f}'.format(project.customer_invoiced_amount_net)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Paid Amount</td>
+                                                            <td class="text-end text-success">
+                                                                <t t-esc="'{:,.2f}'.format(project.customer_paid_amount_net)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Outstanding</td>
+                                                            <td class="text-end text-warning">
+                                                                <t t-esc="'{:,.2f}'.format(project.customer_outstanding_amount_net)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6" t-if="project.portal_show_costs">
+                                            <div class="card">
+                                                <div class="card-header bg-danger text-white">
+                                                    <h5 class="mb-0">Cost Details</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-sm">
+                                                        <tr>
+                                                            <td>Internal Costs</td>
+                                                            <td class="text-end">
+                                                                <t t-esc="'{:,.2f}'.format(project.total_costs_net)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Vendor Bills</td>
+                                                            <td class="text-end">
+                                                                <t t-esc="'{:,.2f}'.format(project.vendor_bills_total_net)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Hours Booked</td>
+                                                            <td class="text-end">
+                                                                <t t-esc="'{:,.2f}'.format(project.total_hours_booked)"/> h
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Budget Information -->
+                                    <div class="row mt-4" t-if="project.budget_amount > 0 and project.portal_show_budget">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header bg-info text-white">
+                                                    <h5 class="mb-0">Budget Status</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-1">Budget Amount</p>
+                                                            <h4>
+                                                                <t t-esc="'{:,.2f}'.format(project.budget_amount)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </h4>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-1">Budget Variance</p>
+                                                            <h4 t-attf-class="text-#{project.budget_variance >= 0 and 'success' or 'danger'}">
+                                                                <t t-esc="'{:,.2f}'.format(project.budget_variance)"/>
+                                                                <t t-esc="project.currency_id.symbol"/>
+                                                            </h4>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <p class="text-muted mb-1">Status</p>
+                                                            <h4>
+                                                                <span t-if="project.budget_status == 'no_budget'" class="badge bg-secondary">No Budget</span>
+                                                                <span t-if="project.budget_status == 'under'" class="badge bg-success">Under Budget</span>
+                                                                <span t-if="project.budget_status == 'on_track'" class="badge bg-success">On Track</span>
+                                                                <span t-if="project.budget_status == 'over'" class="badge bg-warning">Over Budget</span>
+                                                                <span t-if="project.budget_status == 'exceeded'" class="badge bg-danger">Exceeded</span>
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Project Status -->
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Project Information</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <table class="table table-borderless">
+                                                        <tr>
+                                                            <td><strong>Project Manager:</strong></td>
+                                                            <td><t t-esc="project.head_of_project or '-'"/></td>
+                                                        </tr>
+                                                        <tr t-if="project.date_start">
+                                                            <td><strong>Start Date:</strong></td>
+                                                            <td><t t-esc="project.date_start"/></td>
+                                                        </tr>
+                                                        <tr t-if="project.date">
+                                                            <td><strong>End Date:</strong></td>
+                                                            <td><t t-esc="project.date"/></td>
+                                                        </tr>
+                                                        <tr t-if="project.stage_id">
+                                                            <td><strong>Stage:</strong></td>
+                                                            <td><t t-esc="project.stage_id.name"/></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </t>
+                                <t t-else="">
+                                    <div class="alert alert-info mt-4">
+                                        <i class="fa fa-info-circle"/> Financial data is not available for this project in the portal.
+                                        Please contact the project manager for more information.
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- List of projects accessible in portal -->
+    <template id="portal_my_projects" name="Portal: My Projects">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class="mt-3">My Projects</h3>
+                        <t t-if="not projects">
+                            <div class="alert alert-info">
+                                You don't have access to any projects yet.
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Project Name</th>
+                                            <th>Client</th>
+                                            <th>Stage</th>
+                                            <th>Financial Status</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="projects" t-as="project">
+                                            <td><strong><t t-esc="project.name"/></strong></td>
+                                            <td><t t-esc="project.client_name or '-'"/></td>
+                                            <td><t t-esc="project.stage_id.name if project.stage_id else '-'"/></td>
+                                            <td>
+                                                <t t-if="project.portal_show_financial_data and project.portal_show_profit_loss">
+                                                    <span t-if="project.profit_loss_net >= 0" class="badge bg-success">
+                                                        Profitable
+                                                    </span>
+                                                    <span t-else="" class="badge bg-danger">
+                                                        Loss
+                                                    </span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge bg-secondary">Not Shared</span>
+                                                </t>
+                                            </td>
+                                            <td>
+                                                <a t-if="project.portal_show_financial_data"
+                                                   t-attf-href="/my/project/#{project.id}"
+                                                   class="btn btn-sm btn-primary">
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
