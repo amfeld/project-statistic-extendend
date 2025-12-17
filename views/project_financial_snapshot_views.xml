@@ -237,7 +237,6 @@ if records:
         <field name="code">model.create_monthly_snapshots()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">months</field>
-        <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="active" eval="True"/>
     </record>
@@ -249,7 +248,6 @@ if records:
         <field name="code">model.create_quarterly_snapshots()</field>
         <field name="interval_number">3</field>
         <field name="interval_type">months</field>
-        <field name="numbercall">-1</field>
         <field name="doall" eval="False"/>
         <field name="active" eval="True"/>
     </record>
