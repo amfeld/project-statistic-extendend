@@ -40,7 +40,7 @@
 
                 <!-- Customer Invoice Fields - NET (primary) -->
                 <field name="customer_invoiced_amount_net" sum="Total Invoiced (Net)" optional="show"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="140px" string="Invoiced (NET)"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="140px" string="Invoiced (NET)"/>
 
                 <!-- Customer Invoice Breakdown - NET (optional) -->
                 <field name="customer_invoices_net" sum="Total Outgoing Invoices" optional="hide"
@@ -68,7 +68,7 @@
 
                 <!-- Vendor Bills - NET (primary) -->
                 <field name="vendor_bills_total_net" sum="Total Vendor Bills (Net)" optional="show"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="140px" string="Vendor Bills (NET)"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="140px" string="Vendor Bills (NET)"/>
 
                 <!-- Vendor Bills Breakdown - NET (optional) -->
                 <field name="vendor_bills_net" sum="Total Incoming Bills" optional="hide"
@@ -85,7 +85,7 @@
 
                 <!-- Adjusted Vendor Bills (with surcharge factor) -->
                 <field name="adjusted_vendor_bill_amount" sum="Total Adjusted Vendor Bills" optional="hide"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="160px" string="Adj. Vendor Bills"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="160px" string="Adj. Vendor Bills"/>
 
                 <!-- Labor - Original -->
                 <field name="total_hours_booked" sum="Total Hours" optional="show"
@@ -95,10 +95,10 @@
 
                 <!-- Labor - Adjusted (with HFC Factor) - MAIN COLUMNS -->
                 <field name="total_hours_booked_adjusted" sum="Total Hours (Adjusted)" optional="show"
-                       digits="[16, 2]" decoration-bf="True" width="140px"
+                       digits="[16, 2]" width="140px"
                        string="Hours (Adjusted)"/>
                 <field name="labor_costs_adjusted" sum="Labor Costs (Adjusted)" optional="show"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="160px"
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="160px"
                        string="Labor Costs (Adj.)"/>
 
                 <!-- Other Costs -->
@@ -107,16 +107,16 @@
 
                 <!-- Total Cost Fields - NET -->
                 <field name="total_costs_net" sum="Total Costs Net" optional="show"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="140px" string="Total Costs (NET)"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}" width="140px" string="Total Costs (NET)"/>
 
                 <!-- Profitability - NET -->
                 <field name="profit_loss_net" sum="Total Profit/Loss (Net)" optional="show"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"
+                       widget="monetary" options="{'currency_field': 'currency_id'}"
                        decoration-success="profit_loss_net &gt; 0"
                        decoration-danger="profit_loss_net &lt; 0" width="140px"
                        string="Profit/Loss (NET)"/>
                 <field name="current_calculated_profit_loss" sum="Total Current P&amp;L (Calculated)" optional="hide"
-                       widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"
+                       widget="monetary" options="{'currency_field': 'currency_id'}"
                        decoration-success="current_calculated_profit_loss &gt; 0"
                        decoration-danger="current_calculated_profit_loss &lt; 0" width="160px"
                        string="Current P&amp;L (Calc.)"/>
@@ -264,28 +264,28 @@
                     <!-- Key Metrics Overview -->
                     <group string="📊 Financial Overview" col="3">
                         <group string="Revenue (NET)">
-                            <field name="customer_invoiced_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"/>
+                            <field name="customer_invoiced_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"/>
                             <field name="customer_paid_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             <field name="customer_outstanding_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}"
                                    decoration-danger="customer_outstanding_amount_net &gt; 0"/>
                         </group>
                         <group string="Costs (NET)">
                             <field name="vendor_bills_total_net" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                            <field name="adjusted_vendor_bill_amount" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"
+                            <field name="adjusted_vendor_bill_amount" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"
                                    string="Adj. Vendor Bills"/>
-                            <field name="labor_costs_adjusted" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"
+                            <field name="labor_costs_adjusted" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"
                                    string="Labor Costs (Adj.)"/>
-                            <field name="total_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"/>
+                            <field name="total_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"/>
                         </group>
                         <group string="📈 Profitability">
                             <field name="profit_loss_net" widget="monetary" options="{'currency_field': 'currency_id'}"
                                    decoration-success="profit_loss_net &gt; 0"
                                    decoration-danger="profit_loss_net &lt; 0"
-                                   decoration-bf="True"/>
+                                   class="fw-bold"/>
                             <field name="current_calculated_profit_loss" widget="monetary" options="{'currency_field': 'currency_id'}"
                                    decoration-success="current_calculated_profit_loss &gt; 0"
                                    decoration-danger="current_calculated_profit_loss &lt; 0"
-                                   decoration-bf="True"
+                                   class="fw-bold"
                                    string="Current P&amp;L (Calc.)"/>
                             <field name="negative_difference_net" widget="monetary" options="{'currency_field': 'currency_id'}"
                                    invisible="profit_loss_net &gt;= 0"/>
@@ -298,7 +298,7 @@
                             <group string="📋 Sales Orders (Reference)">
                                 <group>
                                     <field name="has_sales_orders" invisible="1"/>
-                                    <field name="sale_order_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"/>
+                                    <field name="sale_order_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"/>
                                     <field name="sale_order_tax_names" string="Tax Codes"/>
                                     <div class="alert alert-warning" role="alert" invisible="has_sales_orders">
                                         <strong>ℹ️ Fallback Value</strong><br/>
@@ -319,7 +319,7 @@
                                     <label for="customer_invoices_net" string="Outgoing Invoices"/>
                                     <div class="o_row">
                                         <field name="customer_invoices_net" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                               decoration-bf="True" class="oe_inline"/>
+                                               class="fw-bold oe_inline"/>
                                         <span class="text-muted oe_inline">(positive)</span>
                                     </div>
                                     <label for="customer_credit_notes_net" string="Credit Notes"/>
@@ -330,7 +330,7 @@
                                     </div>
                                     <separator/>
                                     <field name="customer_invoiced_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                           decoration-bf="True" string="Total Invoiced (NET)"/>
+                                           class="fw-bold" string="Total Invoiced (NET)"/>
                                     <field name="customer_skonto_taken" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            string="Cash Discounts Granted" decoration-warning="customer_skonto_taken != 0"/>
                                 </group>
@@ -340,7 +340,7 @@
                                     <field name="customer_paid_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            decoration-success="customer_paid_amount_net &gt; 0"/>
                                     <field name="customer_outstanding_amount_net" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                           decoration-danger="customer_outstanding_amount_net &gt; 0" decoration-bf="True"/>
+                                           decoration-danger="customer_outstanding_amount_net &gt; 0" class="fw-bold"/>
                                     <separator string="GROSS Reference (with VAT)"/>
                                     <field name="customer_invoiced_amount_gross" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            class="text-muted" string="Total Invoiced (GROSS)"/>
@@ -366,7 +366,7 @@
                                     <label for="vendor_bills_net" string="Incoming Bills"/>
                                     <div class="o_row">
                                         <field name="vendor_bills_net" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                               decoration-bf="True" class="oe_inline"/>
+                                               class="fw-bold oe_inline"/>
                                         <span class="text-muted oe_inline">(positive)</span>
                                     </div>
                                     <label for="vendor_credit_notes_net" string="Credit Notes"/>
@@ -377,7 +377,7 @@
                                     </div>
                                     <separator/>
                                     <field name="vendor_bills_total_net" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                           decoration-bf="True" string="Total Vendor Bills (NET)"/>
+                                           class="fw-bold" string="Total Vendor Bills (NET)"/>
                                     <field name="vendor_skonto_received" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            string="Cash Discounts Received" decoration-success="vendor_skonto_received != 0"/>
                                 </group>
@@ -385,7 +385,7 @@
                                 <!-- Adjusted Costs -->
                                 <group string="Adjusted Costs">
                                     <field name="adjusted_vendor_bill_amount" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                           decoration-bf="True" string="Adjusted Bills (with surcharge)"/>
+                                           class="fw-bold" string="Adjusted Bills (with surcharge)"/>
                                     <p class="text-muted"><small>Surcharge factor: default 1.30 (30% markup)</small></p>
                                     <separator string="GROSS Reference (with VAT)"/>
                                     <field name="vendor_bills_total_gross" widget="monetary" options="{'currency_field': 'currency_id'}"
@@ -409,15 +409,15 @@
                                 </group>
                                 <group string="Adjusted Calculations (with HFC Factor)">
                                     <field name="total_hours_booked_adjusted" digits="[16, 2]"
-                                           string="Total Hours (Adjusted)" decoration-bf="True"/>
+                                           string="Total Hours (Adjusted)" class="fw-bold"/>
                                     <field name="labor_costs_adjusted" widget="monetary" options="{'currency_field': 'currency_id'}"
-                                           string="Labor Costs (Adjusted)" decoration-bf="True"/>
+                                           string="Labor Costs (Adjusted)" class="fw-bold"/>
                                 </group>
                             </group>
                             <group>
                                 <group string="Other Internal Costs">
                                     <field name="other_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}"/>
-                                    <field name="total_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True"
+                                    <field name="total_costs_net" widget="monetary" options="{'currency_field': 'currency_id'}" class="fw-bold"
                                            string="Total Internal Costs"/>
                                 </group>
                             </group>
@@ -449,7 +449,7 @@
                                     <field name="profit_loss_net" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            decoration-success="profit_loss_net &gt; 0"
                                            decoration-danger="profit_loss_net &lt; 0"
-                                           decoration-bf="True"
+                                           class="fw-bold"
                                            string="= Profit/Loss (NET)"/>
                                 </group>
                                 <group string="Current Calculated P&amp;L (Adjusted)">
@@ -466,7 +466,7 @@
                                     <field name="current_calculated_profit_loss" widget="monetary" options="{'currency_field': 'currency_id'}"
                                            decoration-success="current_calculated_profit_loss &gt; 0"
                                            decoration-danger="current_calculated_profit_loss &lt; 0"
-                                           decoration-bf="True"
+                                           class="fw-bold"
                                            string="= Current P&amp;L (Calculated)"/>
                                 </group>
                                 <group string="Additional Metrics">
@@ -543,7 +543,7 @@
                 <field name="product_id" optional="hide" width="180px" string="Product"/>
                 <field name="category" optional="show" width="100px" string="Category"/>
                 <field name="unit_amount" optional="show" sum="Total Hours" digits="[16, 2]" width="100px" string="Hours"/>
-                <field name="amount" optional="show" sum="Total Amount (Net)" widget="monetary" options="{'currency_field': 'currency_id'}" decoration-bf="True" width="130px" string="Amount (NET)"/>
+                <field name="amount" optional="show" sum="Total Amount (Net)" widget="monetary" options="{'currency_field': 'currency_id'}" width="130px" string="Amount (NET)"/>
                 <field name="move_line_id" optional="hide" width="200px" string="Journal Item"/>
                 <field name="company_id" optional="hide" groups="base.group_multi_company"/>
             </list>
