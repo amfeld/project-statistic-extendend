@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Menu structure for Project Statistic module.
+        Main menu is in Accounting > Reports > Project Statistic
+        Submenus are defined in the dashboard views file.
+    -->
+    <data noupdate="0">
+        <!-- Parent menu container in Accounting > Reports -->
+        <menuitem id="menu_project_analytics_accounting"
+                  name="Project Statistic"
+                  parent="account.menu_finance_reports"
+                  sequence="50"
+                  groups="account.group_account_manager,account.group_account_readonly"/>
+    </data>
+</odoo>

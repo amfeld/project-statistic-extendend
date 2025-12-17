@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Kanban View with KPIs -->
+    <record id="view_project_analytics_kanban_dashboard" model="ir.ui.view">
+        <field name="name">project.project.kanban.dashboard</field>
+        <field name="model">project.project</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard" create="false" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="client_name"/>
+                <field name="customer_invoiced_amount_net"/>
+                <field name="total_costs_net"/>
+                <field name="vendor_bills_total_net"/>
+                <field name="profit_loss_net"/>
+                <field name="total_hours_booked"/>
+                <field name="currency_id"/>
+                <field name="has_analytic_account"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.profit_loss_net.raw_value >= 0 ? 'border-success' : 'border-danger'}">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top mb-2">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <span class="o_kanban_record_subtitle text-muted">
+                                            <field name="client_name"/>
+                                        </span>
+                                    </div>
+                                    <div class="o_dropdown_kanban dropdown">
+                                        <a class="dropdown-toggle o-no-caret btn" role="button"
+                                           data-bs-toggle="dropdown" aria-label="Dropdown menu" title="Dropdown menu" href="#">
+                                            <span class="fa fa-ellipsis-v"/>
+                                        </a>
+                                        <div class="dropdown-menu" role="menu">
+                                            <a role="menuitem" type="object" name="action_open_analytics_form" class="dropdown-item">
+                                                Financial Analysis
+                                            </a>
+                                            <a role="menuitem" type="object" name="action_view_account_moves" class="dropdown-item">
+                                                View Invoices &amp; Bills
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span class="text-muted">Revenue</span><br/>
+                                            <strong class="text-success">
+                                                <field name="customer_invoiced_amount_net" widget="monetary"/>
+                                            </strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted">Costs</span><br/>
+                                            <strong class="text-danger">
+                                                <t t-esc="record.total_costs_net.raw_value + record.vendor_bills_total_net.raw_value" t-options="{'widget': 'float', 'precision': 2}"/>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-6">
+                                            <span class="text-muted">Profit/Loss</span><br/>
+                                            <strong t-attf-class="#{record.profit_loss_net.raw_value >= 0 ? 'text-success' : 'text-danger'}">
+                                                <field name="profit_loss_net" widget="monetary"/>
+                                            </strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted">Hours</span><br/>
+                                            <strong>
+                                                <field name="total_hours_booked" widget="float"/> h
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span t-if="record.profit_loss_net.raw_value >= 0" class="badge bg-success">
+                                            Profitable
+                                        </span>
+                                        <span t-else="" class="badge bg-danger">
+                                            Loss
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Dashboard Summary View (Embedded in Form) -->
+    <record id="view_project_analytics_dashboard_summary" model="ir.ui.view">
+        <field name="name">project.analytics.dashboard.summary</field>
+        <field name="model">project.project</field>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard" create="false" edit="false">
+                <sheet>
+                    <div class="container-fluid">
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-12 text-center">
+                                <h2>Project Statistics Dashboard</h2>
+                            </div>
+                        </div>
+
+                        <!-- KPI Cards -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    Use the Pivot and Graph views for detailed analysis.
+                                    Switch to List view to see all projects with financial data.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Enhanced Graph View for Trend Analysis -->
+    <record id="view_project_analytics_trend_graph" model="ir.ui.view">
+        <field name="name">project.project.graph.trend</field>
+        <field name="model">project.project</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <graph string="Project Financial Trends" type="bar" stacked="0" sample="1">
+                <field name="name"/>
+                <field name="customer_invoiced_amount_net" type="measure" string="Revenue (NET)"/>
+                <field name="vendor_bills_total_net" type="measure" string="Vendor Bills (NET)"/>
+                <field name="labor_costs_adjusted" type="measure" string="Labor Costs (Adj.)"/>
+                <field name="profit_loss_net" type="measure" string="Profit/Loss (NET)"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Profit/Loss Comparison Graph -->
+    <record id="view_project_profit_comparison_graph" model="ir.ui.view">
+        <field name="name">project.project.graph.profit.comparison</field>
+        <field name="model">project.project</field>
+        <field name="priority">51</field>
+        <field name="arch" type="xml">
+            <graph string="Profit/Loss Comparison" type="bar" sample="1">
+                <field name="name"/>
+                <field name="profit_loss_net" type="measure" string="Profit/Loss (NET)"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Dashboard Action - Kanban + List + Pivot + Graph -->
+    <record id="action_project_analytics_dashboard" model="ir.actions.act_window">
+        <field name="name">Project Statistics Dashboard</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">kanban,list,pivot,graph</field>
+        <field name="domain">[('has_analytic_account', '=', True)]</field>
+        <field name="context">{}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_project_analytics_kanban_dashboard')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_project_list_account_analytics')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_project_pivot_account_analytics')}),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_project_analytics_trend_graph')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No projects with financial data</p>
+            <p>Projects need an analytic account to display financial statistics.</p>
+        </field>
+    </record>
+
+    <!-- Top Profitable Projects Action -->
+    <record id="action_top_profitable_projects" model="ir.actions.act_window">
+        <field name="name">Top Profitable Projects</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('has_analytic_account', '=', True), ('profit_loss_net', '>', 0)]</field>
+        <field name="context">{'search_default_group_by_client': 0}</field>
+        <field name="limit">10</field>
+        <field name="view_id" ref="view_project_list_account_analytics"/>
+    </record>
+
+    <!-- Loss-Making Projects Action -->
+    <record id="action_loss_making_projects" model="ir.actions.act_window">
+        <field name="name">Projects Requiring Attention</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('has_analytic_account', '=', True), ('profit_loss_net', '&lt;', 0)]</field>
+        <field name="context">{}</field>
+        <field name="view_id" ref="view_project_list_account_analytics"/>
+    </record>
+
+    <!-- Outstanding Invoices Action -->
+    <record id="action_outstanding_invoices_projects" model="ir.actions.act_window">
+        <field name="name">Projects with Outstanding Invoices</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('has_analytic_account', '=', True), ('customer_outstanding_amount_net', '>', 0)]</field>
+        <field name="context">{}</field>
+        <field name="view_id" ref="view_project_list_account_analytics"/>
+    </record>
+
+    <!-- Update main menu to include dashboard -->
+    <record id="menu_project_analytics_dashboard" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_project_analytics_accounting"/>
+        <field name="action" ref="action_project_analytics_dashboard"/>
+        <field name="sequence">5</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_readonly'))]"/>
+    </record>
+
+    <record id="menu_project_analytics_reports_submenu" model="ir.ui.menu">
+        <field name="name">Project List</field>
+        <field name="parent_id" ref="menu_project_analytics_accounting"/>
+        <field name="action" ref="action_project_analytics_report"/>
+        <field name="sequence">10</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_readonly'))]"/>
+    </record>
+
+    <record id="menu_top_profitable" model="ir.ui.menu">
+        <field name="name">Top Profitable</field>
+        <field name="parent_id" ref="menu_project_analytics_accounting"/>
+        <field name="action" ref="action_top_profitable_projects"/>
+        <field name="sequence">15</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_readonly'))]"/>
+    </record>
+
+    <record id="menu_loss_making" model="ir.ui.menu">
+        <field name="name">Requires Attention</field>
+        <field name="parent_id" ref="menu_project_analytics_accounting"/>
+        <field name="action" ref="action_loss_making_projects"/>
+        <field name="sequence">16</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_readonly'))]"/>
+    </record>
+
+    <record id="menu_outstanding_invoices" model="ir.ui.menu">
+        <field name="name">Outstanding Invoices</field>
+        <field name="parent_id" ref="menu_project_analytics_accounting"/>
+        <field name="action" ref="action_outstanding_invoices_projects"/>
+        <field name="sequence">17</field>
+        <field name="groups_id" eval="[(4, ref('account.group_account_readonly'))]"/>
+    </record>
+</odoo>
