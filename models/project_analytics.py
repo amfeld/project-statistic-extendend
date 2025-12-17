@@ -1295,13 +1295,12 @@ class ProjectAnalytics(models.Model):
             }
         }
 
-    @api.depends('id')
     def _compute_snapshot_count(self):
         """Compute the number of financial snapshots for each project."""
         for project in self:
             project.snapshot_count = self.env['project.financial.snapshot'].search_count([
                 ('project_id', '=', project.id)
-            ])
+            ]) if project.id else 0
 
     @api.depends('budget_amount', 'customer_invoiced_amount_net', 'total_all_costs_net')
     def _compute_budget_tracking(self):
